@@ -31,11 +31,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
 
-    // TODO: Implement the security on gateway since the security here is now
-    // working. Configure the environment variable for the gateway to use the
-    // user_db in authenticating users. This will avoid on clashing on async
-    // requests
-
+    /*
+     * TODO: Implement the security on gateway since the security here is now
+     * working. Configure the environment variable for the gateway to use the
+     * user_db in authenticating users. This will avoid on clashing on async
+     * requests
+     */
     @Autowired
     private UserService userService;
 
