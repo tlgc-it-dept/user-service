@@ -54,8 +54,6 @@ public class UserServiceImpl implements UserService {
 
         User newUser = userMapper.newUserDto(newUserDto);
 
-        // TODO: make a guard clause for duplicate usernames and return username already
-        // exists
         Optional.ofNullable(userRepository.findByUsername(newUserDto.getUsername()))
                 .ifPresent(user -> {
                     throw new RuntimeException("Username already used.");
@@ -132,11 +130,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Async
-    public CompletableFuture<ResponseEntity<?>> changeEmail(Long userId, ChangeEmailDto changeEmailDto) {
-        Optional<User> user = Optional.of(userRepository.findById(userId))
-                .orElseThrow(() -> new RuntimeException("User doesn't exist."));
+    public CompletableFuture<ResponseEntity<?>> changeEmail(String userUUID, ChangeEmailDto changeEmailDto) {
+        User thisUser = userRepository.findByUserUUID(userUUID);
 
-        User thisUser = user.get();
+        if (thisUser == null) {
+            throw new RuntimeException("User doesn't exist.");
+        }
 
         thisUser.setEmail(changeEmailDto.getNewEmail());
         userRepository.save(thisUser);
@@ -150,11 +149,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Async
-    public CompletableFuture<ResponseEntity<?>> changePassword(Long userId, ChangePasswordDto changePasswordDto) {
-        Optional<User> user = Optional.of(userRepository.findById(userId))
-                .orElseThrow(() -> new RuntimeException("User doesn't exist."));
+    public CompletableFuture<ResponseEntity<?>> changePassword(String userUUID, ChangePasswordDto changePasswordDto) {
+        User thisUser = userRepository.findByUserUUID(userUUID);
 
-        User thisUser = user.get();
+        if (thisUser == null) {
+            throw new RuntimeException("User doesn't exist.");
+        }
 
         // check if old password matches the password in db
         Boolean isPasswordCorrect = bCryptPasswordEncoder.matches(changePasswordDto.getOldPassword(),
@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
 
         thisUser.setPassword(hashedNewPassword);
         userRepository.save(thisUser);
-        Map<String, String> data = Map.of("message", user.get().getUsername() + " password was successfully modified.");
+        Map<String, String> data = Map.of("message", thisUser.getUsername() + " password was successfully modified.");
         ResponseEntity<?> response = new ResponseEntity<>(data, HttpStatus.OK);
         return CompletableFuture.completedFuture(response);
     }

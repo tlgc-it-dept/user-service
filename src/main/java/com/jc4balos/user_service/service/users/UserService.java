@@ -13,9 +13,9 @@ import com.jc4balos.user_service.dto.request.user.NewUserDto;
 @Service
 public interface UserService {
 
-    CompletableFuture<ResponseEntity<?>> changeEmail(Long userId, ChangeEmailDto changeEmailDto);
+    CompletableFuture<ResponseEntity<?>> changeEmail(String userUUID, ChangeEmailDto changeEmailDto);
 
-    CompletableFuture<ResponseEntity<?>> changePassword(Long userId, ChangePasswordDto changePasswordDto);
+    CompletableFuture<ResponseEntity<?>> changePassword(String userUUID, ChangePasswordDto changePasswordDto);
 
     CompletableFuture<ResponseEntity<?>> createUser(NewUserDto newUserDto);
 

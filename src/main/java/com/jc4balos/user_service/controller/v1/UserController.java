@@ -103,13 +103,13 @@ public class UserController {
 
     }
 
-    @PatchMapping("/change-email/{userId}")
+    @PatchMapping("/change-email/{userUUID}")
     @Async
-    public CompletableFuture<ResponseEntity<?>> changeEmail(@PathVariable("userId") Long userId,
+    public CompletableFuture<ResponseEntity<?>> changeEmail(@PathVariable("userUUID") String userUUID,
             @Valid @RequestBody ChangeEmailDto newEmail,
             BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
-            return userService.changeEmail(userId, newEmail).exceptionally(
+            return userService.changeEmail(userUUID, newEmail).exceptionally(
                     e -> ApplicationExceptionHandler.handleCustomException(e));
 
         } else {
@@ -118,13 +118,13 @@ public class UserController {
 
     }
 
-    @PatchMapping("/change-password/{userId}")
+    @PatchMapping("/change-password/{userUUID}")
     @Async
-    public CompletableFuture<ResponseEntity<?>> changePassword(@PathVariable("userId") Long userId,
+    public CompletableFuture<ResponseEntity<?>> changePassword(@PathVariable("userUUID") String userUUID,
             @Valid @RequestBody ChangePasswordDto passwordDto,
             BindingResult bindingResult) {
         if (!bindingResult.hasErrors()) {
-            return userService.changePassword(userId, passwordDto).exceptionally(
+            return userService.changePassword(userUUID, passwordDto).exceptionally(
                     e -> ApplicationExceptionHandler.handleCustomException(e));
 
         } else {
