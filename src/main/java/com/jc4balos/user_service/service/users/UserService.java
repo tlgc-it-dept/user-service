@@ -22,7 +22,7 @@ public interface UserService {
     CompletableFuture<ResponseEntity<?>> getAllUsers(int pageIndex, int itemsPerPage, String searchParam,
             String sortBy, String order);
 
-    CompletableFuture<ResponseEntity<?>> modifyUserInfo(Long userId, ModifyUserInfoDto modifyUserInfoDto);
+    CompletableFuture<ResponseEntity<?>> modifyUserInfo(String userUUID, ModifyUserInfoDto modifyUserInfoDto);
 
     CompletableFuture<ResponseEntity<?>> getUser(String username);
 

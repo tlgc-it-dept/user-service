@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserCredentialsDto {
 
-    private Long userId;
+    private String userUUID;
 
     private String username;
 

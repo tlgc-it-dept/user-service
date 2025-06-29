@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ViewUserDto {
 
-    private Long userId;
+    private String userUUID;
 
     private String firstName;
 

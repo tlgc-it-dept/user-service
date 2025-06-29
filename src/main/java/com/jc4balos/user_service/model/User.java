@@ -2,6 +2,7 @@ package com.jc4balos.user_service.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +27,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "users", indexes = {
         @Index(name = "username_index", columnList = "username"),
-        @Index(name = "email_index", columnList = "email")
+        @Index(name = "email_index", columnList = "email"),
+        @Index(name = "uuid_index", columnList = "user_uuid")
 })
 @Builder
 @AllArgsConstructor
@@ -37,6 +40,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, name = "user_id")
     private Long userId;
+
+    @Column(nullable = false, name = "user_uuid", unique = true, length = 36)
+    private String userUUID;
 
     @Column(nullable = false, length = 256, name = "first_name")
     private String firstName;
@@ -89,4 +95,8 @@ public class User {
     @Column(nullable = false, name = "is_active")
     private Boolean isActive;
 
+    @PrePersist
+    public void generateUUID() {
+        this.userUUID = UUID.randomUUID().toString();
+    }
 }

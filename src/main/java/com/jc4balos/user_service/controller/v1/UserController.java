@@ -87,14 +87,14 @@ public class UserController {
      * @param userId            user id of user to be modified
      * @return response message
      */
-    @PutMapping("/modify/{userId}")
+    @PutMapping("/modify/{userUUID}")
     @Async
     public CompletableFuture<ResponseEntity<?>> modifyUser(@Valid @RequestBody ModifyUserInfoDto modifyUserInfoDto,
             BindingResult bindingResult,
-            @PathVariable("userId") Long userId) {
+            @PathVariable("userUUID") String userUUID) {
 
         if (!bindingResult.hasErrors()) {
-            return userService.modifyUserInfo(userId, modifyUserInfoDto).exceptionally(
+            return userService.modifyUserInfo(userUUID, modifyUserInfoDto).exceptionally(
                     e -> ApplicationExceptionHandler.handleCustomException(e));
 
         } else {
