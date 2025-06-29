@@ -50,7 +50,7 @@ public class UserMapper {
         viewUserDto.setHusbandSurname(user.getHusbandSurname());
         viewUserDto.setMotherSurname(user.getMotherSurname());
         viewUserDto.setSex(user.getSex());
-        viewUserDto.setUserId(user.getUserId());
+        viewUserDto.setUserUUID(user.getUserUUID());
         viewUserDto.setUsername(user.getUsername());
         return viewUserDto;
     }
@@ -70,7 +70,7 @@ public class UserMapper {
 
     public UserCredentialsDto userCredentialsDto(User user) {
         UserCredentialsDto userCredentialsDto = UserCredentialsDto.builder().email(user.getEmail())
-                .isActive(user.getIsActive()).password(user.getPassword()).userId(user.getUserId())
+                .isActive(user.getIsActive()).password(user.getPassword()).userUUID(user.getUserUUID())
                 .username(user.getUsername()).build();
         return userCredentialsDto;
     }
