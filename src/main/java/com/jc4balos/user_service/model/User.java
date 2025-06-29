@@ -27,7 +27,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "users", indexes = {
         @Index(name = "username_index", columnList = "username"),
-        @Index(name = "email_index", columnList = "email")
+        @Index(name = "email_index", columnList = "email"),
+        @Index(name = "uuid_index", columnList = "user_uuid")
 })
 @Builder
 @AllArgsConstructor

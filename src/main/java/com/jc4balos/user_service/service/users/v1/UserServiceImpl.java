@@ -114,11 +114,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     @Async
-    public CompletableFuture<ResponseEntity<?>> modifyUserInfo(Long userId, ModifyUserInfoDto modifyUserInfoDto) {
-        Optional<User> userToBeModified = Optional.of(userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User doesn't exist")));
+    public CompletableFuture<ResponseEntity<?>> modifyUserInfo(String userUUID, ModifyUserInfoDto modifyUserInfoDto) {
+        User userToBeModified = userRepository.findByUserUUID(userUUID);
+        if (userToBeModified == null) {
+            throw new RuntimeException("User doesn't exist");
+        }
 
-        User modifiedUser = userMapper.modifyUserInfoDto(modifyUserInfoDto, userToBeModified.get());
+        User modifiedUser = userMapper.modifyUserInfoDto(modifyUserInfoDto, userToBeModified);
         userRepository.save(modifiedUser);
         Map<String, String> data = Map.of("message", modifiedUser.getUsername() + " successfully modified.");
 
