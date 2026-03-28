@@ -15,7 +15,7 @@ public interface RoleService {
             String sortBy,
             String order);
 
-    CompletableFuture<ResponseEntity<?>> modifyRoles();
+    CompletableFuture<ResponseEntity<?>> modifyRoles(String roleUUID, NewRoleDto newRoleDto);
 
     CompletableFuture<ResponseEntity<?>> deactivateRole();
 

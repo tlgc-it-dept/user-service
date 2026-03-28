@@ -15,4 +15,7 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
             AND (role_name LIKE CONCAT('%', :searchParam, '%'))
             """)
     Page<Role> findBySearchParam(@Param("searchParam") String searchParam, Pageable pageable);
+
+    Role findByRoleUUID(String roleUUID);
+
 }

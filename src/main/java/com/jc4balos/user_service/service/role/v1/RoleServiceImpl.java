@@ -91,9 +91,22 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public CompletableFuture<ResponseEntity<?>> modifyRoles() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'modifyRoles'");
+    @Async
+    @Transactional
+    public CompletableFuture<ResponseEntity<?>> modifyRoles(String roleUUID, NewRoleDto newRoleDto) {
+        Role thisRole = roleRepository.findByRoleUUID(roleUUID);
+
+        if (thisRole == null) {
+            throw new RuntimeException("Role doesn't exist.");
+        }
+
+        thisRole = roleMapper.newRoleDto(newRoleDto);
+        roleRepository.save(thisRole);
+
+        String message = "Role " + thisRole.getRoleName() + " successfully modified.";
+        logger.info(message);
+        ResponseEntity<?> response = new ResponseEntity<>(Map.of("message", message), HttpStatus.OK);
+        return CompletableFuture.completedFuture(response);
     }
 
     @Override
