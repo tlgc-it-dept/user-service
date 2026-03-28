@@ -11,7 +11,9 @@ import com.jc4balos.user_service.dto.request.role.NewRoleDto;
 public interface RoleService {
     CompletableFuture<ResponseEntity<?>> createRole(NewRoleDto newRoleDto);
 
-    CompletableFuture<ResponseEntity<?>> getAllRoles();
+    CompletableFuture<ResponseEntity<?>> getAllRoles(int pageIndex, int itemsPerPage, String searchParam,
+            String sortBy,
+            String order);
 
     CompletableFuture<ResponseEntity<?>> modifyRoles();
 

@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jc4balos.user_service.dto.request.role.NewRoleDto;
@@ -37,5 +39,16 @@ public class RoleController {
         } else {
             return CompletableFuture.completedFuture(ApplicationExceptionHandler.handleBadRequest(bindingResult));
         }
+    }
+
+    @GetMapping("/get-all")
+    @Async
+    public CompletableFuture<ResponseEntity<?>> getAllUsers(@RequestParam int pageIndex, @RequestParam int itemsPerPage,
+            @RequestParam String searchParam, @RequestParam String sortBy, @RequestParam String order) {
+
+        return roleService.getAllRoles(pageIndex, itemsPerPage, searchParam, sortBy, order)
+                .exceptionally(
+                        e -> ApplicationExceptionHandler.handleCustomException(e));
+
     }
 }
