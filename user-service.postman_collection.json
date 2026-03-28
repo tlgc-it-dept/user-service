@@ -1,0 +1,284 @@
+{
+	"info": {
+		"_postman_id": "6580cfac-66f2-49c7-b260-f38cad166e03",
+		"name": "user-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29321820",
+		"_collection_link": "https://voltesiv.postman.co/workspace/Integrated-Microservice-Develop~954c2fe7-c7cc-4b73-9ea5-8fda4e20efd7/collection/29321820-6580cfac-66f2-49c7-b260-f38cad166e03?action=share&source=collection_link&creator=29321820"
+	},
+	"item": [
+		{
+			"name": "v1",
+			"item": [
+				{
+					"name": "Get all users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}{{user-service-port}}/api/v1/users/get-all?pageIndex=0&itemsPerPage=10&searchParam=&sortBy=username&order=ASCENDING",
+							"host": [
+								"{{localhost}}{{user-service-port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"get-all"
+							],
+							"query": [
+								{
+									"key": "pageIndex",
+									"value": "0"
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "10"
+								},
+								{
+									"key": "searchParam",
+									"value": ""
+								},
+								{
+									"key": "sortBy",
+									"value": "username"
+								},
+								{
+									"key": "order",
+									"value": "ASCENDING",
+									"description": "ASCENDING or DESCENDING"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}{{user-service-port}}/api/v1/users/user/tricia",
+							"host": [
+								"{{localhost}}{{user-service-port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"user",
+								"tricia"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYzRiYWxvcyIsImlhdCI6MTcyNDk1OTE1OCwiZXhwIjoxNzI0OTYyNzU4fQ.RhybGjLWnr7hVEn-BeCft_l0bGu_hydrHJp5I6rgxe0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}{{user-service-port}}/api/v1/users/test",
+							"host": [
+								"{{localhost}}{{user-service-port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify user Info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqYzRiYWxvcyIsImlhdCI6MTcyNDg1NTA5MCwiZXhwIjoxNzI0OTQxNDkwfQ.sBekpgGLT1BTn_a3YqMnB4mmDsAom8r6bgRy8U12_V8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"jd0poh\" ,\r\n    \"motherSurname\":\"Cirilo\",\r\n    \"fatherSurname\":\"dsa\",\r\n    \"husbandSurname\":\"\",\r\n    \"email\":\"jc4bsadsadaalos@gmail.com\",\r\n    \"sex\": \"MALE\",\r\n    \"addressLine1\": \"Lot 15 Blk 9dwadwad\",\r\n    \"addressLine2\": \"Elizaville Subd\",\r\n    \"addressLine3\": \"saddsadsa\",\r\n    \"birthDate\": \"2001-09-22\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}{{user-service-port}}/api/v1/users/modify/5b579f4f-7b2e-4fbd-be43-e0603b3d39e9",
+							"host": [
+								"{{localhost}}{{user-service-port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"modify",
+								"5b579f4f-7b2e-4fbd-be43-e0603b3d39e9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "                            {\r\n    \"firstName\": \"Tricia\" ,\r\n    \"motherSurname\":\"\",\r\n    \"fatherSurname\":\"Reyes\",\r\n    \"husbandSurname\":\"\",\r\n    \"username\":\"tricia\",\r\n    \"password\":\"secret\",\r\n    \"email\":\"triaweda@gmail.com\",\r\n    \"sex\": \"MALE\",\r\n    \"addressLine1\": \"Lot 15 Blk 9\",\r\n    \"addressLine2\": \"Elizaville Subd\",\r\n    \"addressLine3\": \"\",\r\n    \"contactNumber\": \"+639277352967\",\r\n    \"birthDate\": \"2001-09-22\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}{{user-service-port}}/api/v1/users/register",
+							"host": [
+								"{{localhost}}{{user-service-port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change email",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"newEmail\":\"asd@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}{{user-service-port}}/api/v1/users/change-email/5b579f4f-7b2e-4fbd-be43-e0603b3d39e9",
+							"host": [
+								"{{localhost}}{{user-service-port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"change-email",
+								"5b579f4f-7b2e-4fbd-be43-e0603b3d39e9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"oldPassword\":\"secret1234\",\n    \"newPassword\": \"\",\n    \"confirmNewPassword\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}{{user-service-port}}/api/v1/users/change-password/5",
+							"host": [
+								"{{localhost}}{{user-service-port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"change-password",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
