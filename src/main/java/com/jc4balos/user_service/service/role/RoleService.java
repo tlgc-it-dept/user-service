@@ -19,4 +19,6 @@ public interface RoleService {
 
     CompletableFuture<ResponseEntity<?>> deactivateRole();
 
+    CompletableFuture<ResponseEntity<?>> assignRole(String userUUID, String roleUUID);
+
 }

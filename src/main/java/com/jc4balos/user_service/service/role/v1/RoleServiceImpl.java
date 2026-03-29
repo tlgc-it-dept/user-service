@@ -21,7 +21,9 @@ import com.jc4balos.user_service.dto.request.role.NewRoleDto;
 import com.jc4balos.user_service.dto.response.role.ViewRoleDto;
 import com.jc4balos.user_service.mapper.role_mapper.RoleMapper;
 import com.jc4balos.user_service.model.Role;
+import com.jc4balos.user_service.model.User;
 import com.jc4balos.user_service.repository.RoleRepository;
+import com.jc4balos.user_service.repository.UserRepository;
 import com.jc4balos.user_service.service.role.RoleService;
 import com.jc4balos.user_service.service.users.v1.UserServiceImpl;
 
@@ -32,6 +34,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
+
+    private final UserRepository userRepository;
 
     @Autowired
     private RoleMapper roleMapper;
@@ -104,6 +108,29 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.save(thisRole);
 
         String message = "Role " + thisRole.getRoleName() + " successfully modified.";
+        logger.info(message);
+        ResponseEntity<?> response = new ResponseEntity<>(Map.of("message", message), HttpStatus.OK);
+        return CompletableFuture.completedFuture(response);
+    }
+
+    @Override
+    @Async
+    @Transactional
+    public CompletableFuture<ResponseEntity<?>> assignRole(String userUUID, String roleUUID) {
+        Role thisRole = roleRepository.findByRoleUUID(roleUUID);
+        User thisUser = userRepository.findByUserUUID(userUUID);
+
+        if (thisRole == null) {
+            throw new RuntimeException("Role doesn't exist.");
+        }
+
+        if (thisUser == null) {
+            throw new RuntimeException("User doesn't exist.");
+        }
+
+        roleRepository.save(thisRole);
+
+        String message = "Role " + thisRole.getRoleName() + " successfully assigned to user with UUID: " + userUUID;
         logger.info(message);
         ResponseEntity<?> response = new ResponseEntity<>(Map.of("message", message), HttpStatus.OK);
         return CompletableFuture.completedFuture(response);
