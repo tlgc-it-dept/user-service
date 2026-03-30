@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.jc4balos.user_service.dto.request.user.ChangeEmailDto;
 import com.jc4balos.user_service.dto.request.user.ChangePasswordDto;
+import com.jc4balos.user_service.dto.request.user.LoginDto;
 import com.jc4balos.user_service.dto.request.user.ModifyUserInfoDto;
 import com.jc4balos.user_service.dto.request.user.NewUserDto;
 
@@ -25,5 +26,7 @@ public interface UserService {
     CompletableFuture<ResponseEntity<?>> modifyUserInfo(String userUUID, ModifyUserInfoDto modifyUserInfoDto);
 
     CompletableFuture<ResponseEntity<?>> getUser(String username);
+
+    CompletableFuture<ResponseEntity<?>> login(LoginDto loginDto);
 
 }

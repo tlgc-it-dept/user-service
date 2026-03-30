@@ -21,14 +21,18 @@ import org.springframework.stereotype.Service;
 
 import com.jc4balos.user_service.dto.request.user.ChangeEmailDto;
 import com.jc4balos.user_service.dto.request.user.ChangePasswordDto;
+import com.jc4balos.user_service.dto.request.user.LoginDto;
 import com.jc4balos.user_service.dto.request.user.ModifyUserInfoDto;
 import com.jc4balos.user_service.dto.request.user.NewUserDto;
 import com.jc4balos.user_service.dto.response.user.UserCredentialsDto;
 import com.jc4balos.user_service.dto.response.user.ViewUserDto;
 import com.jc4balos.user_service.mapper.user_mapper.UserMapper;
+import com.jc4balos.user_service.model.RoleAssignment;
 import com.jc4balos.user_service.model.User;
+import com.jc4balos.user_service.repository.RoleAssignmentRepository;
 import com.jc4balos.user_service.repository.UserRepository;
 import com.jc4balos.user_service.service.users.UserService;
+import com.jc4balos.user_service.utils.JwtUtil;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +43,16 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    private final RoleAssignmentRepository roleAssignmentRepository;
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -190,6 +199,35 @@ public class UserServiceImpl implements UserService {
 
         UserCredentialsDto userCredentialsDto = userMapper.userCredentialsDto(optionalUser);
         ResponseEntity<?> response = new ResponseEntity<>(userCredentialsDto, HttpStatus.OK);
+        return CompletableFuture.completedFuture(response);
+    }
+
+    @Override
+    @Async
+    public CompletableFuture<ResponseEntity<?>> login(LoginDto loginDto) {
+        User optionalUser = userRepository.findByUsername(loginDto.getUsername());
+
+        if (optionalUser == null || optionalUser.getIsActive() == false) {
+            Map<String, String> data = Map.of("message", "Incorrect username or password. Please try again.");
+            ResponseEntity<?> response = new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+            return CompletableFuture.completedFuture(response);
+        }
+
+        Boolean isPasswordCorrect = bCryptPasswordEncoder.matches(loginDto.getPassword(), optionalUser.getPassword());
+
+        if (!isPasswordCorrect) {
+            Map<String, String> data = Map.of("message", "Incorrect username or password. Please try again.");
+            ResponseEntity<?> response = new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+            return CompletableFuture.completedFuture(response);
+        }
+
+        List<RoleAssignment> roleAssignment = roleAssignmentRepository.findByUser(optionalUser);
+
+        String token = jwtUtil.generateToken(optionalUser,
+                roleAssignment.stream().map(RoleAssignment::getRole).toList());
+
+        ResponseEntity<?> response = ResponseEntity.ok().header("Authorization", "Bearer " + token)
+                .body(Map.of("message", "Login successful."));
         return CompletableFuture.completedFuture(response);
     }
 
