@@ -1,4 +1,4 @@
-package com.jc4balos.user_service.dto.response.user;
+package com.jc4balos.user_service.dto.request.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCredentialsDto {
-
-    private String userUUID;
+public class LoginDto {
 
     private String username;
 
-    private String email;
+    private String password;
 
-    private Boolean isActive;
 }

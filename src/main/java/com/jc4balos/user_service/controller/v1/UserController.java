@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jc4balos.user_service.dto.request.user.ChangeEmailDto;
 import com.jc4balos.user_service.dto.request.user.ChangePasswordDto;
+import com.jc4balos.user_service.dto.request.user.LoginDto;
 import com.jc4balos.user_service.dto.request.user.ModifyUserInfoDto;
 import com.jc4balos.user_service.dto.request.user.NewUserDto;
 import com.jc4balos.user_service.exception.ApplicationExceptionHandler;
@@ -140,6 +141,17 @@ public class UserController {
         return userService.getUser(username)
                 .exceptionally(
                         e -> ApplicationExceptionHandler.handleCustomException(e));
+    }
+
+    @PostMapping("/user/login")
+    public CompletableFuture<ResponseEntity<?>> login(@Valid @RequestBody LoginDto loginDto,
+            BindingResult bindingResult) {
+        if (!bindingResult.hasErrors()) {
+            return userService.login(loginDto)
+                    .exceptionally(e -> ApplicationExceptionHandler.handleCustomException(e));
+        } else {
+            return CompletableFuture.completedFuture(ApplicationExceptionHandler.handleBadRequest(bindingResult));
+        }
     }
 
     @GetMapping("/test")

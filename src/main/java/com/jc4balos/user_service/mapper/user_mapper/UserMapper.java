@@ -70,7 +70,7 @@ public class UserMapper {
 
     public UserCredentialsDto userCredentialsDto(User user) {
         UserCredentialsDto userCredentialsDto = UserCredentialsDto.builder().email(user.getEmail())
-                .isActive(user.getIsActive()).password(user.getPassword()).userUUID(user.getUserUUID())
+                .isActive(user.getIsActive()).userUUID(user.getUserUUID())
                 .username(user.getUsername()).build();
         return userCredentialsDto;
     }
