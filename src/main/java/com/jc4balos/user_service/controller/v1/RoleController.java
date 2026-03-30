@@ -67,4 +67,12 @@ public class RoleController {
             return CompletableFuture.completedFuture(ApplicationExceptionHandler.handleBadRequest(bindingResult));
         }
     }
+
+    @PostMapping("/assign/{userUUID}/{roleUUID}")
+    @Async
+    public CompletableFuture<ResponseEntity<?>> assignRole(@PathVariable String userUUID,
+            @PathVariable String roleUUID) {
+        return roleService.assignRole(userUUID, roleUUID)
+                .exceptionally(e -> ApplicationExceptionHandler.handleCustomException(e));
+    }
 }

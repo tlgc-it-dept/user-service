@@ -19,9 +19,12 @@ import org.springframework.stereotype.Service;
 
 import com.jc4balos.user_service.dto.request.role.NewRoleDto;
 import com.jc4balos.user_service.dto.response.role.ViewRoleDto;
+import com.jc4balos.user_service.mapper.role_assignment_mapper.RoleAssignmentMapper;
 import com.jc4balos.user_service.mapper.role_mapper.RoleMapper;
 import com.jc4balos.user_service.model.Role;
+import com.jc4balos.user_service.model.RoleAssignment;
 import com.jc4balos.user_service.model.User;
+import com.jc4balos.user_service.repository.RoleAssignmentRepository;
 import com.jc4balos.user_service.repository.RoleRepository;
 import com.jc4balos.user_service.repository.UserRepository;
 import com.jc4balos.user_service.service.role.RoleService;
@@ -33,12 +36,17 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
+    private final RoleAssignmentRepository roleAssignmentRepository;
+
     private final RoleRepository roleRepository;
 
     private final UserRepository userRepository;
 
     @Autowired
     private RoleMapper roleMapper;
+
+    @Autowired
+    private RoleAssignmentMapper roleAssignmentMapper;
 
     private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -128,9 +136,11 @@ public class RoleServiceImpl implements RoleService {
             throw new RuntimeException("User doesn't exist.");
         }
 
-        roleRepository.save(thisRole);
+        RoleAssignment newRoleAssignment = roleAssignmentMapper.newRoleAssignment(thisRole, thisUser);
+        roleAssignmentRepository.save(newRoleAssignment);
 
-        String message = "Role " + thisRole.getRoleName() + " successfully assigned to user with UUID: " + userUUID;
+        String message = "Role " + thisRole.getRoleName() + " successfully assigned to " + thisUser.getFirstName() + " "
+                + thisUser.getFatherSurname() + " " + thisUser.getHusbandSurname() + ".";
         logger.info(message);
         ResponseEntity<?> response = new ResponseEntity<>(Map.of("message", message), HttpStatus.OK);
         return CompletableFuture.completedFuture(response);
@@ -140,6 +150,12 @@ public class RoleServiceImpl implements RoleService {
     public CompletableFuture<ResponseEntity<?>> deactivateRole() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deactivateRole'");
+    }
+
+    @Override
+    public CompletableFuture<ResponseEntity<?>> removeRole(String userUUID, String roleUUID) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeRole'");
     }
 
 }
