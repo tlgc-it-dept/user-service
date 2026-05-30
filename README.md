@@ -1,4 +1,4 @@
-# 🚀 User Service (Spring Boot REST API Microservice)
+# 🧑‍💻 User Service (Spring Boot REST API Microservice)
 
 A Spring Boot microservice that provides REST APIs for user management, authentication, and account handling.
 
@@ -10,8 +10,8 @@ A Spring Boot microservice that provides REST APIs for user management, authenti
 - Authentication (Login / JWT-ready structure)
 - Password Management (Change Password)
 - RBAC-ready architecture
-- MariaDB integration
-- Environment-based configuration (dev / prod)
+- MySQL + JPA persistence
+- Environment-based configuration (dev / docker / prod)
 - Thread pool configuration support
 - HikariCP connection pooling
 - REST API-based microservice
@@ -24,8 +24,6 @@ A Spring Boot microservice that provides REST APIs for user management, authenti
 
 - Java 17 (REQUIRED)
 - Maven 3.8+
-- Docker (optional)
-- MariaDB (local or containerized)
 - Git
 - Visual Studio Code
 - Spring Boot Extension Pack (VS Code)
@@ -41,135 +39,189 @@ A Spring Boot microservice that provides REST APIs for user management, authenti
 
 # 📁 Repository
 
-git clone https://github.com/tlgc-it-dept/user-service.git  
+git clone https://github.com/tlgc-it-dept/user-service.git
 cd user-service
 
 ---
 
 # ⚙️ Environment Variables
 
-Create a `.env` file in the root directory.
+This service can load environment values from a root `.env` file when using the **dev** profile.
 
-ACTIVE_PROFILE=dev  
-→ dev = development  
-→ prod = production
+Create a `.env` file in the service root directory:
 
----
+```properties
+ACTIVE_PROFILE=dev
+DB_USERNAME=root_dev
+DB_PASSWORD=password_for_dev
+```
 
-## Production Configuration
-
-PROD_SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/user_service  
-PROD_SPRING_DATASOURCE_USERNAME=root  
-PROD_SPRING_DATASOURCE_PASSWORD=Password123  
-PROD_SPRING_PORT=8080
+> `application-dev.properties` uses `spring.config.import=file:.env[.properties]`.
 
 ---
 
-## Development Configuration
+## Database (what the profiles expect)
 
-DEV_SPRING_DATASOURCE_URL=jdbc:mariadb://localhost:3306/user_service  
-DEV_SPRING_DATASOURCE_USERNAME=root_dev  
-DEV_SPRING_DATASOURCE_PASSWORD=password_for_dev  
-DEV_SPRING_PORT=8080
+### 1) `dev` (local database)
 
----
+- `spring.datasource.url` is fixed to:
+  - `jdbc:mysql://localhost:3306/user_service`
+- Required:
+  - `DB_USERNAME`
+  - `DB_PASSWORD`
 
-## MariaDB Container
+### 2) `docker` (container network)
 
-MARIADB_ROOT_PASSWORD=root  
-MARIADB_PORT=3306
+Used by `application-docker.properties`.
 
----
+Required:
 
-## Thread Pool Configuration
+- `DB_HOST` (e.g., a MySQL container name)
+- `DB_USERNAME`
+- `DB_PASSWORD`
 
-THREAD_CORE_POOL_SIZE=4  
-THREAD_MAX_POOL_SIZE=50  
-THREAD_QUEUE_CAPACITY=600  
-THREAD_KEEP_ALIVE_MS=60000
+Also set:
 
----
+- `SPRING_PROFILES_ACTIVE=docker`
 
-## Database Pool Configuration
+### 3) `prod` (external injection only)
 
-DB_MAX_POOL_SIZE=30  
-DB_MIN_IDLE_CONNECTIONS=10  
-DB_CONNECTION_LIFETIME_MS=3600000  
-DB_CONNECTION_TIMEOUT_MS=30000
+Used by `application-prod.properties`.
+
+Required:
+
+- `DB_URL` (full JDBC URL)
+- `DB_USER`
+- `DB_PASSWORD`
+
+Optional tuning (with defaults matching the properties file):
+
+- `DB_MAX_POOL_SIZE` (default: 30)
+- `DB_MIN_IDLE` (default: 10)
+- `DB_MAX_LIFETIME` (default: 1800000)
+- `DB_TIMEOUT` (default: 30000)
+- `THREAD_CORE` (default: 8)
+- `THREAD_MAX` (default: 16)
+- `THREAD_QUEUE` (default: 200)
+- `THREAD_KEEPALIVE` (default: 60000)
 
 ---
 
 # 🧑‍💻 Development Setup
 
-## 1. Clone Repository
+## Option 1: Run Locally (VS Code / Maven dev mode)
 
-git clone https://github.com/tlgc-it-dept/user-service.git  
-cd user-service
+### A: Using VS Code (Recommended)
 
----
+1. Open the project folder in VS Code.
+2. Use the Spring Boot Dashboard.
+3. Click **Run / Debug** on the `user-service` application.
 
-## 2. Set Environment
+### B: Using Terminal (Maven)
 
-ACTIVE_PROFILE=dev
+1. Start a MySQL database locally.
+2. Ensure your `.env` file contains the required `DB_USERNAME` and `DB_PASSWORD`.
+3. Run:
 
-Make sure MariaDB is running locally.
-
----
-
-## 3. Run in VS Code
-
-- Open project in VS Code
-- Use Spring Boot Dashboard
-- Click Run / Debug
-
----
-
-## 4. Run via CLI
-
-mvn clean compile  
+```bash
+mvn clean compile
 mvn spring-boot:run
+```
+
+---
+
+## Option 2: Run Using Docker Container (profile: docker)
+
+This mode uses `application-docker.properties` and expects the app to connect to a MySQL instance via `DB_HOST`, `DB_USERNAME`, and `DB_PASSWORD`.
+
+### Step 1: Build the JAR
+
+```bash
+mvn clean package -DskipTests
+```
+
+### Step 2: Build the Docker image
+
+```bash
+docker build --no-cache -t user-service .
+```
+
+### Step 3: Start the container
+
+Example (MySQL on the same Docker network):
+
+```bash
+docker run -d --name user-service \
+  -p 8081:8081 \
+  -e DB_HOST=mysql \
+  -e DB_USERNAME=root \
+  -e DB_PASSWORD=secret \
+  -e SPRING_PROFILES_ACTIVE=docker \
+  -e JWT_SECRET=REPLACE_ME_WITH_BASE64 \
+  -e JWT_EXPIRATION=3600000 \
+  user-service
+```
+
+JWT secret notes:
+
+- `JwtUtil` expects properties `JWT.SECRET` and `JWT.EXPIRATION`.
+- Because this runs in Docker without changing source code, provide them via env vars:
+  - `JWT_SECRET` -> `JWT.SECRET`
+  - `JWT_EXPIRATION` -> `JWT.EXPIRATION`
+- `JWT.SECRET` must be **Base64-encoded**, since `JwtUtil` does `Decoders.BASE64.decode(secret)`.
+
+If MySQL is reachable from the host, `DB_HOST` should be set accordingly (e.g., `host.docker.internal`).
+
+---
+
+## Option 3: Run in Production Mode (external database)
+
+This mode uses `application-prod.properties` (JPA validation, production-safe logging).
+
+### Step 1: Build the JAR
+
+```bash
+mvn clean package -DskipTests
+```
+
+### Step 2: Run with prod profile
+
+```bash
+java -jar target/user-service.jar --spring.profiles.active=prod
+```
+
+### Docker example (prod)
+
+```bash
+docker run -d --name user-service-prod \
+  -p 8080:8080 \
+  -e SPRING_PROFILES_ACTIVE=prod \
+  -e DB_URL=jdbc:mysql://external-host:3306/user_service \
+  -e DB_USER=your_user \
+  -e DB_PASSWORD=your_password \
+  user-service
+```
 
 ---
 
 # 🧪 API Testing (Bruno)
 
 - Open Bruno
-- Import collection
-- Set environment variables
+- Import the `user-service-api-tests` collection
+- Set environment variables in Bruno
 - Send requests to:
 
-http://localhost:8080
-
----
-
-# 🚀 Deployment Guide
-
-## Option 1: Full Deployment (App + Database)
-
-ACTIVE_PROFILE=prod
-
-mvn clean package -Dmaven.test.skip=true
-
-sudo docker compose -f docker-compose.yaml up --build -d
-
----
-
-## Option 2: Service Only Deployment
-
-spring.profiles.active=prod
-
-mvn clean package -Dmaven.test.skip=true
-
-sudo docker compose -f docker-compose-service-only.yaml up --build -d
+http://localhost:8081
 
 ---
 
 # 🧠 Important Notes
 
 - Requires Java 17
-- Do NOT mix dev and prod configs
-- Ensure MariaDB is running before starting service
-- Always match ACTIVE_PROFILE correctly
+- Profile-specific configuration is important (`dev` / `docker` / `prod`)
+- `dev` loads `.env` from the project root
+- `docker` expects `DB_HOST` to be resolvable from the container network
+- `prod` uses external JDBC injection (`DB_URL`, `DB_USER`, `DB_PASSWORD`)
 - Uses HikariCP for DB performance
 - REST API microservice (no frontend)
 
@@ -181,6 +233,5 @@ sudo docker compose -f docker-compose-service-only.yaml up --build -d
 - Java 17 required
 - VS Code supported
 - Bruno for API testing
-- Docker Compose ready
-- MariaDB supported
-- Scalable architecture
+- Docker run instructions included
+- MySQL-backed persistence
