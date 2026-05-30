@@ -1,7 +1,7 @@
 FROM amazoncorretto:17
-EXPOSE 8082
+EXPOSE 8081
 COPY target/*.jar /user_service.jar
 COPY .env /
-ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "user_service.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar", "user_service.jar"]
 
 
