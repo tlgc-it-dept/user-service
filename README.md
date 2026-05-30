@@ -157,7 +157,7 @@ docker run -d --name user-service \
   -e DB_USERNAME=root \
   -e DB_PASSWORD=secret \
   -e SPRING_PROFILES_ACTIVE=docker \
-  -e JWT_SECRET_BASE64=REPLACE_ME_WITH_BASE64 \
+  -e JWT_SECRET=REPLACE_ME_WITH_BASE64 \
   -e JWT_EXPIRATION=3600000 \
   user-service
 ```
@@ -166,7 +166,7 @@ JWT secret notes:
 
 - `JwtUtil` expects properties `JWT.SECRET` and `JWT.EXPIRATION`.
 - Because this runs in Docker without changing source code, provide them via env vars:
-  - `JWT_SECRET_BASE64` -> `JWT.SECRET`
+  - `JWT_SECRET` -> `JWT.SECRET`
   - `JWT_EXPIRATION` -> `JWT.EXPIRATION`
 - `JWT.SECRET` must be **Base64-encoded**, since `JwtUtil` does `Decoders.BASE64.decode(secret)`.
 
