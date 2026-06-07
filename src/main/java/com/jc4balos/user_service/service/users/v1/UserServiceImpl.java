@@ -27,7 +27,7 @@ import com.jc4balos.user_service.dto.request.user.NewUserDto;
 import com.jc4balos.user_service.dto.response.user.UserCredentialsDto;
 import com.jc4balos.user_service.dto.response.user.ViewUserDto;
 import com.jc4balos.user_service.mapper.user_mapper.UserMapper;
-import com.jc4balos.user_service.model.RoleAssignment;
+import com.jc4balos.user_service.model.Role;
 import com.jc4balos.user_service.model.User;
 import com.jc4balos.user_service.repository.RoleAssignmentRepository;
 import com.jc4balos.user_service.repository.UserRepository;
@@ -221,10 +221,19 @@ public class UserServiceImpl implements UserService {
             return CompletableFuture.completedFuture(response);
         }
 
-        List<RoleAssignment> roleAssignment = roleAssignmentRepository.findByUser(optionalUser);
+        List<Role> userRoles = roleAssignmentRepository.findRolesByUser(optionalUser.getUserId());
+
+        System.out.println("ROLES: " + userRoles);
+
+        List<String> roleNames = new ArrayList<>();
+        List<String> roleUUIDs = new ArrayList<>();
+        for (Role role : userRoles) {
+            roleNames.add(role.getRoleName());
+            roleUUIDs.add(role.getRoleUUID());
+        }
 
         String token = jwtUtil.generateToken(optionalUser,
-                roleAssignment.stream().map(RoleAssignment::getRole).toList());
+                roleNames, roleUUIDs);
 
         ResponseEntity<?> response = ResponseEntity.ok().header("Authorization", "Bearer " + token)
                 .body(Map.of("message", "Login successful."));

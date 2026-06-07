@@ -3,12 +3,10 @@ package com.jc4balos.user_service.utils;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.jc4balos.user_service.model.Role;
 import com.jc4balos.user_service.model.User;
 
 import io.jsonwebtoken.Jwts;
@@ -24,26 +22,38 @@ public class JwtUtil {
     @Value("${JWT.EXPIRATION}")
     private Long expiration; // in milliseconds
 
-    public String generateToken(User user, List<Role> rolesList) {
+    public String generateToken(User user, List<String> rolesNames, List<String> roleUUIDs) {
         try {
+
             return Jwts.builder()
-                    .subject(user.getUsername()) // was .setSubject()
-                    .claim("user_uuid", user.getUserUUID())
-                    .claim("roles", rolesList.stream()
-                            .map(role -> Map.of(
-                                    "role_uuid", role.getRoleUUID().toString(),
-                                    "role_name", role.getRoleName()))
-                            .toList())
+                    .subject(user.getUsername()) // keep subject for X-User (gateway uses payload.sub)
+                    .claim("user_uuid", user.getUserUUID()) // gateway uses payload.user_uuid
+                    .claim("useruuid", user.getUserUUID()) // also add underscoreless variant for consumers that expect
+                    // it
+                    .claim("roles", toRoleObjects(roleUUIDs, rolesNames))
+
                     .issuedAt(new Date()) // was .setIssuedAt()
                     .expiration(new Date(System.currentTimeMillis() + expiration)) // was .setExpiration()
                     .signWith(getSigningKey()) // no need to pass algorithm separately
                     .compact();
+
         } catch (Exception e) {
             e.printStackTrace();
             // Handle exceptions related to JWT generation
             throw new RuntimeException("Error generating JWT token", e);
         }
 
+    }
+
+    private List<java.util.Map<String, String>> toRoleObjects(List<String> roleUUIDs, List<String> roleNames) {
+        // Build roles as: [ { "roleuuid": "...", "rolename": "..." }, ... ]
+        // Keep ordering aligned by index.
+        int size = Math.min(roleUUIDs.size(), roleNames.size());
+        return java.util.stream.IntStream.range(0, size)
+                .mapToObj(i -> java.util.Map.of(
+                        "roleuuid", roleUUIDs.get(i),
+                        "rolename", roleNames.get(i)))
+                .toList();
     }
 
     private Key getSigningKey() {
