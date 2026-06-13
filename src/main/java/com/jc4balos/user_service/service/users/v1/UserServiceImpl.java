@@ -24,6 +24,7 @@ import com.jc4balos.user_service.dto.request.user.ChangePasswordDto;
 import com.jc4balos.user_service.dto.request.user.LoginDto;
 import com.jc4balos.user_service.dto.request.user.ModifyUserInfoDto;
 import com.jc4balos.user_service.dto.request.user.NewUserDto;
+import com.jc4balos.user_service.dto.response.user.LoginResponseDto;
 import com.jc4balos.user_service.dto.response.user.UserCredentialsDto;
 import com.jc4balos.user_service.dto.response.user.ViewUserDto;
 import com.jc4balos.user_service.mapper.user_mapper.UserMapper;
@@ -235,8 +236,12 @@ public class UserServiceImpl implements UserService {
         String token = jwtUtil.generateToken(optionalUser,
                 roleNames, roleUUIDs);
 
-        ResponseEntity<?> response = ResponseEntity.ok().header("Authorization", "Bearer " + token)
-                .body(Map.of("message", "Login successful."));
+        LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                .message("Login successful.")
+                .token(token)
+                .build();
+
+        ResponseEntity<?> response = ResponseEntity.ok().body(loginResponseDto);
         return CompletableFuture.completedFuture(response);
     }
 
