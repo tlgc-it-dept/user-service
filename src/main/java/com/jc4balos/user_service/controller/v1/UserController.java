@@ -143,6 +143,15 @@ public class UserController {
                         e -> ApplicationExceptionHandler.handleCustomException(e));
     }
 
+    @GetMapping("/user/id/{userUUID}")
+    @Async
+    public CompletableFuture<ResponseEntity<?>> getUserById(@PathVariable("userUUID") String userUUID) {
+
+        return userService.getUserByUUID(userUUID)
+                .exceptionally(
+                        e -> ApplicationExceptionHandler.handleCustomException(e));
+    }
+
     @PostMapping("/user/login")
     public CompletableFuture<ResponseEntity<?>> login(@Valid @RequestBody LoginDto loginDto,
             BindingResult bindingResult) {

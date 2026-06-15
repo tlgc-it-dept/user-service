@@ -29,4 +29,6 @@ public interface UserService {
 
     CompletableFuture<ResponseEntity<?>> login(LoginDto loginDto);
 
+    CompletableFuture<ResponseEntity<?>> getUserByUUID(String userUUID);
+
 }

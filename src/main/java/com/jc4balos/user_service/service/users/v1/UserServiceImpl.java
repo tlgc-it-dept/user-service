@@ -245,4 +245,20 @@ public class UserServiceImpl implements UserService {
         return CompletableFuture.completedFuture(response);
     }
 
+    @Override
+    @Async
+    public CompletableFuture<ResponseEntity<?>> getUserByUUID(String userUUID) {
+        User optionalUser = userRepository.findByUserUUID(userUUID);
+
+        if (optionalUser == null) {
+            Map<String, String> data = Map.of("message", "User doesn't exist.");
+            ResponseEntity<?> response = new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
+            return CompletableFuture.completedFuture(response);
+        }
+
+        ViewUserDto userCredentialsDto = userMapper.viewUserDto(optionalUser);
+        ResponseEntity<?> response = new ResponseEntity<>(userCredentialsDto, HttpStatus.OK);
+        return CompletableFuture.completedFuture(response);
+    }
+
 }
