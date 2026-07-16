@@ -57,6 +57,14 @@ public class RoleServiceImpl implements RoleService {
 
         Role newRole = roleMapper.newRoleDto(newRoleDto);
 
+        if (roleRepository.existsByRoleKey(newRoleDto.getRoleKey())) {
+            throw new RuntimeException("Role key already used.");
+        }
+
+        if (roleRepository.existsByRoleName(newRoleDto.getRoleName())) {
+            throw new RuntimeException("Role name already used.");
+        }
+
         roleRepository.save(newRole);
         String message = "Role " + newRole.getRoleName() + " created successfully.";
         logger.info(message);
