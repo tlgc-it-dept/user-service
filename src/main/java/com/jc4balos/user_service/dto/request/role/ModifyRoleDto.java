@@ -17,4 +17,7 @@ public class ModifyRoleDto {
 
     @NotBlank(message = "Role description is not valid.")
     private String roleDescription;
+
+    @NotBlank(message = "Role key is not valid.")
+    private String roleKey;
 }

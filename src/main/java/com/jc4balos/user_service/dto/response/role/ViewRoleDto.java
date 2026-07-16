@@ -15,4 +15,6 @@ public class ViewRoleDto {
     private String roleName;
 
     private String roleDescription;
+
+    private String roleKey;
 }

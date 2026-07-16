@@ -42,6 +42,9 @@ public class Role {
     @Column(nullable = false, name = "is_active")
     private Boolean isActive;
 
+    @Column(nullable = false, name = "role_key")
+    private String roleKey;
+
     @PrePersist
     public void generateUUID() {
         this.roleUUID = UUID.randomUUID().toString();

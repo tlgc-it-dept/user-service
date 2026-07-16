@@ -112,7 +112,7 @@ public class RoleServiceImpl implements RoleService {
             throw new RuntimeException("Role doesn't exist.");
         }
 
-        thisRole = roleMapper.newRoleDto(newRoleDto);
+        roleMapper.updateRoleFromDto(thisRole, newRoleDto);
         roleRepository.save(thisRole);
 
         String message = "Role " + thisRole.getRoleName() + " successfully modified.";
