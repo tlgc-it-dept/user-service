@@ -25,14 +25,14 @@ import com.jc4balos.user_service.dto.request.user.ChangePasswordDto;
 import com.jc4balos.user_service.dto.request.user.LoginDto;
 import com.jc4balos.user_service.dto.request.user.ModifyUserInfoDto;
 import com.jc4balos.user_service.dto.request.user.NewUserDto;
+import com.jc4balos.user_service.dto.response.role.ViewRoleDto;
 import com.jc4balos.user_service.dto.response.user.LoginResponseDto;
 import com.jc4balos.user_service.dto.response.user.UserCredentialsDto;
 import com.jc4balos.user_service.dto.response.user.ViewUserDto;
-import com.jc4balos.user_service.dto.response.role.ViewRoleDto;
 import com.jc4balos.user_service.mapper.role_mapper.RoleMapper;
 import com.jc4balos.user_service.mapper.user_mapper.UserMapper;
-import com.jc4balos.user_service.model.RoleAssignment;
 import com.jc4balos.user_service.model.Role;
+import com.jc4balos.user_service.model.RoleAssignment;
 import com.jc4balos.user_service.model.User;
 import com.jc4balos.user_service.repository.RoleAssignmentRepository;
 import com.jc4balos.user_service.repository.UserRepository;
@@ -249,7 +249,7 @@ public class UserServiceImpl implements UserService {
         List<String> roleNames = new ArrayList<>();
         List<String> roleUUIDs = new ArrayList<>();
         for (Role role : userRoles) {
-            roleNames.add(role.getRoleName());
+            roleNames.add(role.getRoleKey());
             roleUUIDs.add(role.getRoleUUID());
         }
 

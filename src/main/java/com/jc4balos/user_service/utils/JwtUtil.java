@@ -22,16 +22,16 @@ public class JwtUtil {
     @Value("${JWT.EXPIRATION}")
     private Long expiration; // in milliseconds
 
-    public String generateToken(User user, List<String> rolesNames, List<String> roleUUIDs) {
+    public String generateToken(User user, List<String> roleKeys, List<String> roleUUIDs) {
         try {
 
             return Jwts.builder()
                     .subject(user.getUsername()) // keep subject for X-User (gateway uses payload.sub)
                     .claim("user_uuid", user.getUserUUID()) // gateway uses payload.user_uuid
-                    .claim("useruuid", user.getUserUUID()) // also add underscoreless variant for consumers that expect
-                    // it
-                    .claim("roles", toRoleObjects(roleUUIDs, rolesNames))
-
+                    .claim("full_name",
+                            user.getFirstName() + " " + user.getMotherSurname() + " " + user.getFatherSurname() + " "
+                                    + user.getHusbandSurname())
+                    .claim("roles", toRoleObjects(roleUUIDs, roleKeys))
                     .issuedAt(new Date()) // was .setIssuedAt()
                     .expiration(new Date(System.currentTimeMillis() + expiration)) // was .setExpiration()
                     .signWith(getSigningKey()) // no need to pass algorithm separately
