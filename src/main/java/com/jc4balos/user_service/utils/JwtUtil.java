@@ -36,13 +36,11 @@ public class JwtUtil {
                     .expiration(new Date(System.currentTimeMillis() + expiration)) // was .setExpiration()
                     .signWith(getSigningKey()) // no need to pass algorithm separately
                     .compact();
-
         } catch (Exception e) {
             e.printStackTrace();
             // Handle exceptions related to JWT generation
             throw new RuntimeException("Error generating JWT token", e);
         }
-
     }
 
     private List<java.util.Map<String, String>> toRoleObjects(List<String> roleUUIDs, List<String> roleNames) {
