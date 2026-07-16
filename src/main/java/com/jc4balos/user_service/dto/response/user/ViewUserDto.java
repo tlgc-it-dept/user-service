@@ -1,7 +1,9 @@
 package com.jc4balos.user_service.dto.response.user;
 
 import java.time.LocalDate;
+import java.util.List;
 
+import com.jc4balos.user_service.dto.response.role.ViewRoleDto;
 import com.jc4balos.user_service.values.UserSex;
 
 import lombok.AllArgsConstructor;
@@ -40,5 +42,7 @@ public class ViewUserDto {
     private LocalDate birthDate;
 
     private UserSex sex;
+
+    private List<ViewRoleDto> roles;
 
 }

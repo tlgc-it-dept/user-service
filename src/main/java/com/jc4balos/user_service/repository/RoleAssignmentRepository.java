@@ -16,6 +16,16 @@ public interface RoleAssignmentRepository extends JpaRepository<RoleAssignment, 
 
     RoleAssignment findByUserAndRole(User user, Role role);
 
+    @Query("""
+                SELECT ra
+                FROM RoleAssignment ra
+                JOIN FETCH ra.user
+                JOIN FETCH ra.role
+                WHERE ra.user.userId IN :userIDs
+                AND ra.role.isActive = true
+            """)
+    List<RoleAssignment> findByUserIdsWithActiveRoles(@Param("userIDs") List<Long> userIDs);
+
     // @Query(nativeQuery = true, value = """
     // SELECT b.* FROM role_assignment a
     // INNER JOIN role b ON a.role_id = b.role_id
