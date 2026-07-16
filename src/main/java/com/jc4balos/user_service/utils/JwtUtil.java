@@ -43,14 +43,14 @@ public class JwtUtil {
         }
     }
 
-    private List<java.util.Map<String, String>> toRoleObjects(List<String> roleUUIDs, List<String> roleNames) {
-        // Build roles as: [ { "roleuuid": "...", "rolename": "..." }, ... ]
+    private List<java.util.Map<String, String>> toRoleObjects(List<String> roleUUIDs, List<String> roleKeys) {
+        // Build roles as: [ { "roleUUID": "...", "roleKey": "..." }, ... ]
         // Keep ordering aligned by index.
-        int size = Math.min(roleUUIDs.size(), roleNames.size());
+        int size = Math.min(roleUUIDs.size(), roleKeys.size());
         return java.util.stream.IntStream.range(0, size)
                 .mapToObj(i -> java.util.Map.of(
-                        "roleuuid", roleUUIDs.get(i),
-                        "rolename", roleNames.get(i)))
+                        "roleUUID", roleUUIDs.get(i),
+                        "roleKey", roleKeys.get(i)))
                 .toList();
     }
 

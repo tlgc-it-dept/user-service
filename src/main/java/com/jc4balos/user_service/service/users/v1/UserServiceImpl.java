@@ -246,15 +246,15 @@ public class UserServiceImpl implements UserService {
 
         System.out.println("ROLES: " + userRoles);
 
-        List<String> roleNames = new ArrayList<>();
+        List<String> roleKeys = new ArrayList<>();
         List<String> roleUUIDs = new ArrayList<>();
         for (Role role : userRoles) {
-            roleNames.add(role.getRoleKey());
+            roleKeys.add(role.getRoleKey());
             roleUUIDs.add(role.getRoleUUID());
         }
 
         String token = jwtUtil.generateToken(optionalUser,
-                roleNames, roleUUIDs);
+                roleKeys, roleUUIDs);
 
         LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                 .message("Login successful.")
