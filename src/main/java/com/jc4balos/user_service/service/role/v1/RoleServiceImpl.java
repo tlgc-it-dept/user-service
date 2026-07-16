@@ -155,15 +155,56 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public CompletableFuture<ResponseEntity<?>> deactivateRole() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deactivateRole'");
+    @Async
+    @Transactional
+    public CompletableFuture<ResponseEntity<?>> deactivateRole(String roleUUID) {
+        Role thisRole = roleRepository.findByRoleUUID(roleUUID);
+
+        if (thisRole == null) {
+            throw new RuntimeException("Role doesn't exist.");
+        }
+
+        if (Boolean.FALSE.equals(thisRole.getIsActive())) {
+            throw new RuntimeException("Role is already inactive.");
+        }
+
+        thisRole.setIsActive(false);
+        roleRepository.save(thisRole);
+
+        String message = "Role " + thisRole.getRoleName() + " successfully deactivated.";
+        logger.info(message);
+        ResponseEntity<?> response = new ResponseEntity<>(Map.of("message", message), HttpStatus.OK);
+        return CompletableFuture.completedFuture(response);
     }
 
     @Override
+    @Async
+    @Transactional
     public CompletableFuture<ResponseEntity<?>> removeRole(String userUUID, String roleUUID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeRole'");
+        User thisUser = userRepository.findByUserUUID(userUUID);
+        Role thisRole = roleRepository.findByRoleUUID(roleUUID);
+
+        if (thisUser == null) {
+            throw new RuntimeException("User doesn't exist.");
+        }
+
+        if (thisRole == null) {
+            throw new RuntimeException("Role doesn't exist.");
+        }
+
+        RoleAssignment roleAssignment = roleAssignmentRepository.findByUserAndRole(thisUser, thisRole);
+        if (roleAssignment == null) {
+            throw new RuntimeException("User doesn't have this role.");
+        }
+
+        roleAssignmentRepository.delete(roleAssignment);
+
+        String message = "Role " + thisRole.getRoleName() + " successfully removed from "
+                + thisUser.getFirstName() + " " + thisUser.getFatherSurname() + " "
+                + thisUser.getHusbandSurname() + ".";
+        logger.info(message);
+        ResponseEntity<?> response = new ResponseEntity<>(Map.of("message", message), HttpStatus.OK);
+        return CompletableFuture.completedFuture(response);
     }
 
 }

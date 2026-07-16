@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,6 +74,21 @@ public class RoleController {
     public CompletableFuture<ResponseEntity<?>> assignRole(@PathVariable String userUUID,
             @PathVariable String roleUUID) {
         return roleService.assignRole(userUUID, roleUUID)
+                .exceptionally(e -> ApplicationExceptionHandler.handleCustomException(e));
+    }
+
+    @PatchMapping("/deactivate/{roleUUID}")
+    @Async
+    public CompletableFuture<ResponseEntity<?>> deactivateRole(@PathVariable String roleUUID) {
+        return roleService.deactivateRole(roleUUID)
+                .exceptionally(e -> ApplicationExceptionHandler.handleCustomException(e));
+    }
+
+    @DeleteMapping("/remove/{userUUID}/{roleUUID}")
+    @Async
+    public CompletableFuture<ResponseEntity<?>> removeRole(@PathVariable String userUUID,
+            @PathVariable String roleUUID) {
+        return roleService.removeRole(userUUID, roleUUID)
                 .exceptionally(e -> ApplicationExceptionHandler.handleCustomException(e));
     }
 }
