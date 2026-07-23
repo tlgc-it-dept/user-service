@@ -103,7 +103,7 @@ public class RoleServiceImpl implements RoleService {
 
         Map<String, Object> data = Map.of("pageIndex", roles.getNumber(),
                 "totalPages", roles.getTotalPages(),
-                "users", viewRoleDtos);
+                "roles", viewRoleDtos);
 
         ResponseEntity<?> response = new ResponseEntity<>(data, HttpStatus.OK);
 
