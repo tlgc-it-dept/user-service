@@ -1,6 +1,7 @@
 package com.jc4balos.user_service.service.role.v1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -215,6 +216,33 @@ public class RoleServiceImpl implements RoleService {
         logger.info(message);
         ResponseEntity<?> response = new ResponseEntity<>(Map.of("message", message), HttpStatus.OK);
         return CompletableFuture.completedFuture(response);
+    }
+
+    @Override
+    @Async
+    @Transactional
+    public CompletableFuture<ResponseEntity<?>> getRolesFromUser(String userUUID) {
+
+        User thisUser = userRepository.findByUserUUID(userUUID);
+        if (thisUser == null) {
+            throw new RuntimeException("User doesn't exist.");
+        }
+
+        List<RoleAssignment> roleAssignments = roleAssignmentRepository.findByUser(thisUser);
+
+        List<ViewRoleDto> viewRoleDtos = new ArrayList<>();
+        for (RoleAssignment ra : roleAssignments) {
+            ViewRoleDto mappedRole = roleMapper.viewRoleDto(ra.getRole());
+            viewRoleDtos.add(mappedRole);
+        }
+
+        logger.info("Retrieved assigned roles for user {}.", thisUser.getUsername());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("userUUID", thisUser.getUserUUID());
+        response.put("roles", viewRoleDtos);
+
+        return CompletableFuture.completedFuture(new ResponseEntity<>(response, HttpStatus.OK));
     }
 
 }

@@ -91,4 +91,11 @@ public class RoleController {
         return roleService.removeRole(userUUID, roleUUID)
                 .exceptionally(e -> ApplicationExceptionHandler.handleCustomException(e));
     }
+
+    @GetMapping("/user/{userUUID}")
+    @Async
+    public CompletableFuture<ResponseEntity<?>> getRolesFromUser(@PathVariable String userUUID) {
+        return roleService.getRolesFromUser(userUUID)
+                .exceptionally(e -> ApplicationExceptionHandler.handleCustomException(e));
+    }
 }

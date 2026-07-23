@@ -23,4 +23,6 @@ public interface RoleService {
 
     CompletableFuture<ResponseEntity<?>> removeRole(String userUUID, String roleUUID);
 
+    CompletableFuture<ResponseEntity<?>> getRolesFromUser(String userUUID);
+
 }
