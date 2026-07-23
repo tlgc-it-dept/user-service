@@ -144,6 +144,16 @@ public class RoleServiceImpl implements RoleService {
             throw new RuntimeException("User doesn't exist.");
         }
 
+        if (roleAssignmentRepository.existsByUserAndRole(thisUser, thisRole)) {
+            String alreadyAssignedMessage = "The user has already been assigned the role '" + thisRole.getRoleName()
+                    + "'.";
+            logger.warn("User '" + thisUser.getUsername() + "' already has the role '" + thisRole.getRoleName()
+                    + "'. Duplicate assignment prevented.");
+            ResponseEntity<?> response = new ResponseEntity<>(Map.of("message", alreadyAssignedMessage),
+                    HttpStatus.CONFLICT);
+            return CompletableFuture.completedFuture(response);
+        }
+
         RoleAssignment newRoleAssignment = roleAssignmentMapper.newRoleAssignment(thisRole, thisUser);
         roleAssignmentRepository.save(newRoleAssignment);
 

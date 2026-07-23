@@ -16,6 +16,8 @@ public interface RoleAssignmentRepository extends JpaRepository<RoleAssignment, 
 
     RoleAssignment findByUserAndRole(User user, Role role);
 
+    boolean existsByUserAndRole(User user, Role role);
+
     @Query("""
                 SELECT ra
                 FROM RoleAssignment ra
